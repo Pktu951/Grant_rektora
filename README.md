@@ -1,0 +1,2 @@
+# Grant_rektora
+ 
