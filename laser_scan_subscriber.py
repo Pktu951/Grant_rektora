@@ -1,8 +1,7 @@
-#!/usr/bin/env pytohn3
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
-from  sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import LaserScan
 
 class LaserScanSubscriber(Node):
 
@@ -45,13 +44,3 @@ class LaserScanSubscriber(Node):
         self.get_logger.info('Intesities:')
         for i, intensity_val in enumerate(msg.intensities):
             self.get_logger().info(f' Intensity {i}: {intensity_val}')
-
-
-
-def main(args=None):
-    rclpy.init(args=args)
-
-    node = LaserScanSubscriber()
-    rclpy.spin(node)
-
-    rclpy.shutdown()
