@@ -4,7 +4,6 @@ from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import LaserScan
 
 class LaserScanSubscriber(Node):
-
     def __init__(self):
         super().__init__('laser_scan_subscriber')
         self.laser_scan_subscriber_ = self.create_subscription(
