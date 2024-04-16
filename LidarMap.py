@@ -20,12 +20,12 @@ class LidarMap:
         :param lidar_scan: An object with properties of the Lidar scan.
         """
         angle = lidar_scan.angle_min
-
-        for index, distance in enumerate(lidar_scan.ranges):
-            if not (lidar_scan.range_min <= distance <= lidar_scan.range_max):
-                print(f"Invalid distance value: {distance} at index {index}")
-                continue
+        angles = np.arange(lidar_scan.angle_min, lidar_scan.angle_max + lidar_scan.angle_increment, lidar_scan.angle_increment)    # start, stop, step 
             
+        for distance, angle in zip(lidar_scan.ranges, angles):
+            if not (lidar_scan.range_min <= distance <= lidar_scan.range_max):
+                print(f"Invalid distance value: {distance} at angle {angle}")
+                continue    
             # Convert polar coordinates (angle, distance) to Cartesian coordinates (x, y)
             x = int((distance * np.cos(angle)) / self.resolution)
             y = int((distance * np.sin(angle)) / self.resolution)
@@ -33,7 +33,8 @@ class LidarMap:
             # Calculate map coordinates and check if they are within bounds
             map_x = self.position[0] + x
             map_y = self.position[1] - y  # y is inverted because map coordinates are top-down, while Cartesian coordinates are bottom-up
-            if 0 <= map_x < self.size and 0 <= map_y < self.size:
+            coordinatesWithinBounds  = 0 <= map_x < self.size and 0 <= map_y < self.size
+            if coordinatesWithinBounds:
                 self.map[map_y, map_x] = True
 
             angle += lidar_scan.angle_increment
@@ -42,8 +43,8 @@ class LidarMap:
         map_str = ""
         for i, row in enumerate(self.map):
             if i == self.position[1]:
-                map_str += " ".join(["." if j == self.position[0] else "1" if cell else "0" for j, cell in enumerate(row)]) + "\n"
+                map_str += " ".join(["." if j == self.position[0] else "█" if cell else " " for j, cell in enumerate(row)]) + "\n"
             else:
-                map_str += " ".join(["1" if cell else "0" for cell in row]) + "\n"
+                map_str += " ".join(["█" if cell else " " for cell in row]) + "\n"
             
         return map_str
