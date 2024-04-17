@@ -9,12 +9,17 @@ class LidarScan:
         :param range_max: maximum range value [m]
         :param ranges: range data [m]
         """
+        
+        #self.header = header
         self.angle_min = angle_min
         self.angle_max = angle_max
         self.angle_increment = angle_increment
+        #self.time_increment = time_increment
+        #self.scan_time = scan_time
         self.range_min = range_min
         self.range_max = range_max
         self.ranges = ranges
+        #self.intensities = intensities
 
     def __repr__(self):
         return (f"LidarScan(angle_min={self.angle_min}, angle_max={self.angle_max}, "

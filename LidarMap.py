@@ -14,6 +14,11 @@ class LidarMap:
         self.position = (size // 2, size-1)  # point that the lidar is taking scan from
         self.process_scan(lidar_scan)
 
+    def _set_map_value(self, map_x, map_y):
+        coordinatesWithinBounds  = 0 <= map_x < self.size and 0 <= map_y < self.size
+        if coordinatesWithinBounds:
+            self.map[map_y, map_x] = True
+
     def process_scan(self, lidar_scan):
         """
         Process the Lidar scan and update the map accordingly.
@@ -33,9 +38,7 @@ class LidarMap:
             # Calculate map coordinates and check if they are within bounds
             map_x = self.position[0] + x
             map_y = self.position[1] - y  # y is inverted because map coordinates are top-down, while Cartesian coordinates are bottom-up
-            coordinatesWithinBounds  = 0 <= map_x < self.size and 0 <= map_y < self.size
-            if coordinatesWithinBounds:
-                self.map[map_y, map_x] = True
+            self._set_true_if_within(map_x, map_y)
 
             angle += lidar_scan.angle_increment
             
