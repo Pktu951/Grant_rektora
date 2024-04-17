@@ -31,14 +31,3 @@ class ScannerPublisher(Node):
         msg.intensities = [0.0] * int((msg.angle_max - msg.angle_min) / msg.angle_increment)  
 
         self.publisher.publish(msg)
-
-def main(args=None):
-    rclpy.init(args=args)
-    skanner = ScannerPublisher(10)
-
-    rclpy.spin(skanner)
-    skanner.destroy_node()
-    rclpy.shutdown()
-
-if __name__ == '__main__':
-    main()
