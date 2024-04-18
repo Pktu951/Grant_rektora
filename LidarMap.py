@@ -9,8 +9,8 @@ class LidarMap:
         :param size: The width and height of the square map in cells.
         :param resolution: The size of each cell in meters.
         """
-        self.size = size  # size of the map in cells
-        self.resolution = resolution  # resolution of a cell in meters
+        self.size = size
+        self.resolution = resolution
         self.map = np.zeros((size, size), dtype=bool)  # initialize the map with boolean values
         self.position = (size-1, size // 2)  # point that the lidar is taking scan from
         
