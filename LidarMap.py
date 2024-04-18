@@ -21,15 +21,15 @@ class LidarMap:
         Process the Laser scan and update the map accordingly.
         :param lidar_scan: A LaserScan message object.
         """
-        angles = np.arange(laser_scan.angle_min, laser_scan.angle_max + laser_scan.angle_increment, laser_scan.angle_increment)
-        angles = np.radians(angles) # convert degrees to radians
+        angles_degrees = np.arange(laser_scan.angle_min, laser_scan.angle_max + laser_scan.angle_increment, laser_scan.angle_increment)
+        angles_radians = np.radians(angles_degrees)
         
-        for distance, angle in zip(laser_scan.ranges, angles):
+        for distance, angle_radians in zip(laser_scan.ranges, angles_radians):
             if not (laser_scan.range_min <= distance <= laser_scan.range_max):
-                print(f"Invalid distance value: {distance} at angle {angle}")
+                print(f"Invalid distance value: {distance} at angle {angle_radians}")
                 continue
             
-            map_x, map_y = self._calculate_map_position(distance, angle)
+            map_x, map_y = self._calculate_map_position(distance, angle_radians)
             self._set_map_value(map_x, map_y)
             
     def _calculate_map_position(self, distance : float, angle : float) -> tuple:
