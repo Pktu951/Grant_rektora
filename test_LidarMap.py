@@ -1,9 +1,17 @@
-import numpy as np
 from LidarMap import LidarMap
-from LidarScan import LidarScan
+from sensor_msgs.msg import LaserScan
 
-lidarScan = LidarScan(angle_min=0, angle_max=np.pi, angle_increment=np.pi/3, range_min=0.1, range_max=12, ranges=[2, 5, 12, 5])
-print(lidarScan)
-lidarMap = LidarMap(lidarScan)
+ourLaserScan = LaserScan()
+
+ourLaserScan.angle_min = -90.0
+ourLaserScan.angle_max = 90.0
+ourLaserScan.angle_increment = 45.0
+ourLaserScan.time_increment = 0.1
+ourLaserScan.scan_time = 0.1
+ourLaserScan.range_min = 0.5
+ourLaserScan.range_max = 5.0
+ourLaserScan.ranges = [3.0, 3.0, 3.0, 3.0, 3.0]
+
+lidarMap = LidarMap(ourLaserScan)
 
 print(lidarMap)

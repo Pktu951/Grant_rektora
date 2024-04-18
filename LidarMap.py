@@ -1,53 +1,54 @@
 import numpy as np
+from sensor_msgs.msg import LaserScan
 
 class LidarMap:
-    def __init__(self, lidar_scan, size=11, resolution=1):
+    def __init__(self, laser_scan: LaserScan, size : int = 11, resolution : float = 1):
         """
-        Initialize the map using a Lidar scan.
-        :param lidar_scan: An object with properties of the Lidar scan.
+        Initialize the map using a ROS 2 LaserScan scan.
+        :param lidar_scan: A LaserScan message object.
         :param size: The width and height of the square map in cells.
         :param resolution: The size of each cell in meters.
         """
         self.size = size  # size of the map in cells
         self.resolution = resolution  # resolution of a cell in meters
         self.map = np.zeros((size, size), dtype=bool)  # initialize the map with boolean values
-        self.position = (size // 2, size-1)  # point that the lidar is taking scan from
-        self.process_scan(lidar_scan)
+        self.position = (size-1, size // 2)  # point that the lidar is taking scan from
+        
+        self.process_scan(laser_scan)
 
-    def _set_map_value(self, map_x, map_y):
-        coordinatesWithinBounds  = 0 <= map_x < self.size and 0 <= map_y < self.size
-        if coordinatesWithinBounds:
-            self.map[map_y, map_x] = True
-
-    def process_scan(self, lidar_scan):
+    def process_scan(self, laser_scan: LaserScan) -> None:
         """
-        Process the Lidar scan and update the map accordingly.
-        :param lidar_scan: An object with properties of the Lidar scan.
+        Process the Laser scan and update the map accordingly.
+        :param lidar_scan: A LaserScan message object.
         """
-        angle = lidar_scan.angle_min
-        angles = np.arange(lidar_scan.angle_min, lidar_scan.angle_max + lidar_scan.angle_increment, lidar_scan.angle_increment)    # start, stop, step 
-            
-        for distance, angle in zip(lidar_scan.ranges, angles):
-            if not (lidar_scan.range_min <= distance <= lidar_scan.range_max):
+        angles = np.arange(laser_scan.angle_min, laser_scan.angle_max + laser_scan.angle_increment, laser_scan.angle_increment)
+        angles = np.radians(angles) # convert degrees to radians
+        
+        for distance, angle in zip(laser_scan.ranges, angles):
+            if not (laser_scan.range_min <= distance <= laser_scan.range_max):
                 print(f"Invalid distance value: {distance} at angle {angle}")
-                continue    
-            # Convert polar coordinates (angle, distance) to Cartesian coordinates (x, y)
-            x = int((distance * np.cos(angle)) / self.resolution)
-            y = int((distance * np.sin(angle)) / self.resolution)
-
-            # Calculate map coordinates and check if they are within bounds
-            map_x = self.position[0] + x
-            map_y = self.position[1] - y  # y is inverted because map coordinates are top-down, while Cartesian coordinates are bottom-up
-            self._set_true_if_within(map_x, map_y)
-
-            angle += lidar_scan.angle_increment
+                continue
             
+            map_x, map_y = self._calculate_map_position(distance, angle)
+            self._set_map_value(map_x, map_y)
+            
+    def _calculate_map_position(self, distance : float, angle : float) -> tuple:
+        x = int(np.rint((distance * np.cos(angle)) / self.resolution))
+        y = int(np.rint((distance * np.sin(angle)) / self.resolution))
+
+        map_x = self.position[0] - x
+        map_y = self.position[1] + y
+        return map_x, map_y
+            
+    def _set_map_value(self, map_x : int, map_y : int) -> None:
+        if 0 <= map_x < self.size and 0 <= map_y < self.size:
+            self.map[map_x, map_y] = True
+
     def __repr__(self):
         map_str = ""
         for i, row in enumerate(self.map):
-            if i == self.position[1]:
-                map_str += " ".join(["." if j == self.position[0] else "█" if cell else " " for j, cell in enumerate(row)]) + "\n"
+            if i == self.position[0]:
+                map_str += " ".join(["." if j == self.position[1] else "█" if cell else " " for j, cell in enumerate(row)]) + "\n"
             else:
                 map_str += " ".join(["█" if cell else " " for cell in row]) + "\n"
-            
         return map_str
