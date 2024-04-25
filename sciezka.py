@@ -4,7 +4,7 @@ import math
 import LidarMap
 
 class Road:
-    def __init__(self, map_class : LaserScan, starting_point : tuple, ending_point : tuple, resolution : LaserScan, car_length = 1.5, car_width = 0.5):
+    def __init__(self, map_class : LidarMap, starting_point : tuple, ending_point : tuple, resolution : LidarMap, car_length = 1.5, car_width = 0.5):
         self.lidar_map = map_class.map
         self.path = []
         self.resolution = resolution.resolution
