@@ -13,14 +13,14 @@ class Road:
 
         self.starting_point = starting_point
         self.ending_point = ending_point
-
-    def finding_path (self):
+    def defining_keys(self):
         keys = []
         for i in range (len(self.lidar_map)):
             for j in range (len(self.lidar_map[0])):
                 if not self.lidar_map[i][j]:
                     keys.append((i,j)) # dodaje współrzędne przyszłych wierzchołków grafu (wszystkie punkty które są zerami)
-
+        return keys
+    def creating_possible_paths(self, keys):
         graph = {}
         slant = []
         for k,v in enumerate (keys):
@@ -93,17 +93,9 @@ class Road:
                     if help == True:
                         values.append(keys.index((v[0]-1,v[1]+1)))
                         slant.append((k,keys.index((v[0]-1,v[1]+1))))
-        graph[k] = values # graf ma mieć jako klucze numery wierzchołków od 0 do len(keys) - 1, a jako wartości ma mieć indexy do których można przejść z danego wiezchołka
-        wage_function = np.full((len(keys), len(keys)), np.inf)
-        for i in range(len(keys)):
-            for j in range(len(keys)):
-                if j in graph[i] : # jeśli j-ty wierzchołek sąsiaduje z i-tym
-                    if (i,j) in slant: # jeśli przejście od niego na skos to waga pierwiastek z dwóch
-                        wage_function[i][j] = np.sqrt(2)
-                    else:
-                        wage_function[i][j] = 1.0
-
-
+            graph[k] = values # graf ma mieć jako klucze numery wierzchołków od 0 do len(keys) - 1, a jako wartości ma mieć indexy do których można przejść z danego wiezchołka
+        return graph, slant
+    def bellman_ford(self, graph, keys, wage_function):
         V = list(graph.keys()) # lista wierzchołków
         start_index = keys.index((self.starting_point))
         end_index = keys.index((self.ending_point))
@@ -129,6 +121,19 @@ class Road:
         for v in path:
             self.path.append(keys[v]) # odtwarzam ścieżke na podstawie numerów wierzchołków z algorytmu bellman-forda
         self.path = np.array(self.path)
+        
+    def finding_path (self):
+        keys = self.defining_keys()
+        graph, slant = self.creating_possible_paths(keys)
+        wage_function = np.full((len(keys), len(keys)), np.inf)
+        for i in range(len(keys)):
+            for j in range(len(keys)):
+                if j in graph[i] : # jeśli j-ty wierzchołek sąsiaduje z i-tym
+                    if (i,j) in slant: # jeśli przejście od niego na skos to waga pierwiastek z dwóch
+                        wage_function[i][j] = np.sqrt(2)
+                    else:
+                        wage_function[i][j] = 1.0
+        self.bellman_ford(graph, keys, wage_function)
 
     def __repr__ (self):
         string ='['
