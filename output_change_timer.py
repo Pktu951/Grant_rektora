@@ -47,5 +47,7 @@ class OutputChangeTimer(Node):
                 self.get_logger().info('Go Left')
             case CommandArray.GO_RIGHT:
                 self.get_logger().info('Go Right')
+            case CommandArray.GO_BACKWARD:
+                self.get_logger().info('Go Backward')
             case _:
                 self.get_logger().info('Stop')
