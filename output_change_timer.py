@@ -2,6 +2,7 @@ from rclpy.node import Node
 from interfaces.msg import CommandArray
 from collections import deque
 from threading import Lock
+import RPi.GPIO as GPIO
 
 class OutputChangeTimer(Node):
     def __init__(self, interval: float = 0.1):
@@ -15,6 +16,20 @@ class OutputChangeTimer(Node):
         self._commands = deque()
         self._lock = Lock()
         self._interval = interval
+
+        self.pins = [xx, xx, xx, xx]
+
+        GPIO.setmode(GPIO.BOARD)
+        for pin in self.pins:
+            GPIO.setup(pin, GPIO.OUT)
+        
+        self.command_pin_states = {
+            CommandArray.STOP: [GPIO.LOW, GPIO.LOW, GPIO.LOW, GPIO.LOW],
+            CommandArray.GO_FORWARD: [GPIO.HIGH, GPIO.LOW, GPIO.LOW, GPIO.LOW],
+            CommandArray.GO_LEFT: [GPIO.LOW, GPIO.HIGH, GPIO.LOW, GPIO.LOW],
+            CommandArray.GO_RIGHT: [GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.LOW],
+            CommandArray.GO_BACKWARD: [GPIO.LOW, GPIO.LOW, GPIO.LOW, GPIO.HIGH]
+        }
         
         self._subscription = self.create_subscription(
             CommandArray,
@@ -40,14 +55,7 @@ class OutputChangeTimer(Node):
     def _execute_command(self, command: int) -> None:
         """Execute the given command."""
         
-        match command:
-            case CommandArray.GO_FORWARD:
-                self.get_logger().info('Go Forward')
-            case CommandArray.GO_LEFT:
-                self.get_logger().info('Go Left')
-            case CommandArray.GO_RIGHT:
-                self.get_logger().info('Go Right')
-            case CommandArray.GO_BACKWARD:
-                self.get_logger().info('Go Backward')
-            case _:
-                self.get_logger().info('Stop')
+        for pin, state in zip(self.pins, self.command_pin_states[command]):
+            GPIO.output(pin, state)
+            
+        self.get_logger().info(f'Command: {command}')
