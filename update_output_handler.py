@@ -1,12 +1,4 @@
-try:
-    import RPi.GPIO as GPIO
-except ImportError:
-    print("RPi.GPIO not found, using simulated version.")
-    try:
-        import SimulRPi.GPIO as GPIO
-    except ImportError:
-        print("SimulRPi not found, exiting.")
-        exit(1)
+from gpio_importer import GPIO
 from interfaces.msg import CommandArray
 
 class UpdateOutputHandler:
