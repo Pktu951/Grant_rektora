@@ -1,4 +1,4 @@
-from UI import UI
+from UI_of_path import UI
 from robot_message import RobotMessage
 
 if __name__ == '__main__':

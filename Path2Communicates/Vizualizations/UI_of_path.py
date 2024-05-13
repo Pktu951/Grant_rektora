@@ -76,7 +76,7 @@ class UI:
                                     scaled_y + const.POINT_RADIUS,
                                     fill='green')
 
-    def scaled_point(self, x: float, y: float) -> tuple[float, float]:
+    def scaled_point(self, x: float, y: float) -> 'tuple[float, float]':
         scaled_x = x * const.RESOLUTION_X
         scaled_y = y * const.RESOLUTION_Y
 
@@ -94,7 +94,7 @@ class UI:
                                     scaled_y + 5,
                                     fill='white')
 
-        print(self.robot.messages)
+        #print(self.robot.messages)
 
 
 
