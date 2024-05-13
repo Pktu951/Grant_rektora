@@ -5,7 +5,7 @@ from std_msgs.msg import LaserScan, Header
 from rclpy.qos import qos_profile_sensor_data
 import numpy as np
 
-class ScannerPublisher(Node):
+class ScannerMockPublisher(Node):
     def __init__(self, frequency:int):
         super().__init__('scanner_publisher')
         self.publisher = self.create_publisher(LaserScan, 'scanner_topic', 10)  
@@ -38,3 +38,14 @@ class ScannerPublisher(Node):
         msg.intensities = np.array([], dtype="float32") 
 
         self.publisher.publish(msg)
+
+def main(args=None):
+    rclpy.init(args=args)
+    skanner = ScannerMockPublisher(10)
+
+    rclpy.spin(skanner)
+    skanner.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
