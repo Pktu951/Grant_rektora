@@ -3,7 +3,7 @@ import const
 from robot_message import RobotMessage
 
 
-class UI:
+class path_UI:
     def __init__(self, robot: RobotMessage):
         self.robot = robot
 
