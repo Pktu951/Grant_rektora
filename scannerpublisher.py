@@ -38,14 +38,3 @@ class ScannerMockPublisher(Node):
         msg.intensities = np.array([], dtype="float32") 
 
         self.publisher.publish(msg)
-
-def main(args=None):
-    rclpy.init(args=args)
-    skanner = ScannerMockPublisher(10)
-
-    rclpy.spin(skanner)
-    skanner.destroy_node()
-    rclpy.shutdown()
-
-if __name__ == '__main__':
-    main()
