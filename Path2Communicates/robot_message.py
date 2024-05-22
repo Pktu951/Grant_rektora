@@ -73,11 +73,12 @@ class RobotMessage:
 
         return messages
     
-    def make_message_from_path(self, path: List[Tuple[float, float]]) -> List:
+    def make_message_from_path(self, path: List[Tuple[float, float]]) -> CommandArray:
         commands = []
         for coordinates in path:
             commands.extend(self._message_generator(coordinates))
         #print(messages)                                                            #do wizualizacji
-        CommandArray.commands = commands
-        return commands
+        command_array = CommandArray()
+        command_array.commands = commands
+        return command_array
     
