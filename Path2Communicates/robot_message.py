@@ -4,7 +4,7 @@ from typing import List, Tuple
 from const import DISTANCE_1_MESSAGE, ANGLE_AFTER_1_MESSAGE, DY_AFTER_1_MESSAGE, DX_AFTER_1_MESSAGE
 from interfaces.msg import CommandArray
 
-class RobotMessage:
+class RobotMessageGenerator:
     def __init__(self):
         self.robot_coordinates = [0.0, 0.0]
         self.trace = {}
