@@ -1,7 +1,7 @@
-import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import LaserScan
+from interfaces.msg import CommandArray
 
 class LaserScanSubscriber(Node):
     def __init__(self):
@@ -12,6 +12,8 @@ class LaserScanSubscriber(Node):
             self.scan_callback,
             qos_profile_sensor_data
         )
+        self.publisher_ = self.create_publisher(CommandArray, 'command_array', 10)
+    
     
     def scan_callback(self, msg: LaserScan):
         header = msg.header

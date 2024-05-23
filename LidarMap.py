@@ -3,6 +3,7 @@ from sensor_msgs.msg import LaserScan
 
 class LidarMap:
     def __init__(self, laser_scan: LaserScan, size : int = 11, cell_size : float = 1):
+
         """
         Initialize the map using a ROS 2 LaserScan scan.
         :param lidar_scan: A LaserScan message object.
