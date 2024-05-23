@@ -6,7 +6,6 @@ import LidarMap
 class RoadFinder:
     def __init__(self, map_class: LidarMap, starting_point: tuple, ending_point: tuple,car_length=1.5, car_width=0.5):
         self.lidar_map = map_class.map
-        self_cell_size = map_class.cell_size
         self.car_length = car_length
         self.car_width = car_width
         self.starting_point = starting_point
