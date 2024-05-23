@@ -2,7 +2,8 @@ import numpy as np
 from sensor_msgs.msg import LaserScan
 
 class LidarMap:
-    def __init__(self, laser_scan: LaserScan, size : int = 11, resolution : float = 1):
+    def __init__(self, laser_scan: LaserScan, size : int = 11, cell_size : float = 1):
+
         """
         Initialize the map using a ROS 2 LaserScan scan.
         :param lidar_scan: A LaserScan message object.
@@ -10,7 +11,7 @@ class LidarMap:
         :param resolution: The size of each cell in meters.
         """
         self.size = size
-        self.resolution = resolution
+        self.cell_size = cell_size
         self.map = np.zeros((size, size), dtype=bool)  # initialize the map with boolean values
         self.position = (size-1, size // 2)  # point that the lidar is taking scan from
         
@@ -33,8 +34,8 @@ class LidarMap:
             self._set_map_value(map_x, map_y)
             
     def _calculate_map_position(self, distance : float, angle : float) -> tuple:
-        x = int(np.rint((distance * np.cos(angle)) / self.resolution))
-        y = int(np.rint((distance * np.sin(angle)) / self.resolution))
+        x = int(np.rint((distance * np.cos(angle)) / self.cell_size))
+        y = int(np.rint((distance * np.sin(angle)) / self.cell_size))
 
         map_x = self.position[0] - x
         map_y = self.position[1] + y
