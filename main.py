@@ -8,7 +8,7 @@ def main(args=None):
     
     laser_scan_node = LaserScanSubscriber()
     output_change_timer = OutputChangeTimer()
-    scanner_mock_pub = ScannerMockPublisher(10)
+    scanner_mock_pub = ScannerMockPublisher(1)
 
     executor = rclpy.executors.MultiThreadedExecutor()
     executor.add_node(laser_scan_node)
@@ -16,11 +16,12 @@ def main(args=None):
     executor.add_node(scanner_mock_pub)
 
     try:
+        print("Spinning...")
         executor.spin()
     except KeyboardInterrupt:
         print("KeyboardInterrupt caught, shutting down...")
-    except Exception as e:
-        print(f"An exception occurred: {e}")
+
+
     finally:
         executor.shutdown()
         laser_scan_node.destroy_node()
@@ -29,3 +30,5 @@ def main(args=None):
 
         if rclpy.ok():
             rclpy.shutdown()
+
+main()

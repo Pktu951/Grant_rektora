@@ -1,7 +1,7 @@
 import math
 import numpy as np
 from typing import List, Tuple
-from const import DISTANCE_1_MESSAGE, ANGLE_AFTER_1_MESSAGE, DY_AFTER_1_MESSAGE, DX_AFTER_1_MESSAGE
+from Path2Communicates.const import DISTANCE_1_MESSAGE, ANGLE_AFTER_1_MESSAGE, DY_AFTER_1_MESSAGE, DX_AFTER_1_MESSAGE
 from interfaces.msg import CommandArray
 
 class RobotMessageGenerator:
@@ -16,7 +16,7 @@ class RobotMessageGenerator:
 
         return math.degrees(math.atan2(projected_y, projected_x))
     
-    def _get_rotation_matrix(self) -> float[2][2]:
+    def _get_rotation_matrix(self) -> np.ndarray:
         rotation_matrix = np.zeros((2, 2))
         rotation_matrix[0][0] = math.cos(self.robot_angle)
         rotation_matrix[0][1] = -math.sin(self.robot_angle)

@@ -1,7 +1,12 @@
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import LaserScan
+
+from LidarMap import LidarMap
 from interfaces.msg import CommandArray
+from Path2Communicates.robot_message import RobotMessageGenerator
+from RoadFinder import RoadFinder
+
 
 class LaserScanSubscriber(Node):
     def __init__(self):
@@ -13,35 +18,17 @@ class LaserScanSubscriber(Node):
             qos_profile_sensor_data
         )
         self.publisher_ = self.create_publisher(CommandArray, 'command_array', 10)
-    
-    
+        self._message_generator = RobotMessageGenerator()
+
     def scan_callback(self, msg: LaserScan):
-        header = msg.header
-
-        angle_min = msg.angle_min
-        angle_max = msg.angle_max
-        angle_increment = msg.angle_increment
-
-        time_increment = msg.time_increment
-
-        scan_time = msg.scan_time
-
-        range_max = msg.range_max
-        range_min = msg.range_min
-
-        self.get_logger().info(f'Header stamp: {header.stamp}\n'
-                               f'Angle Min: {angle_min}\n'
-                               f'Angle Max: {angle_max}\n'
-                               f'Angle Increment: {angle_increment}\n'
-                               f'Time Increment: {time_increment}\n'
-                               f'Scan Time: {scan_time}\n'
-                               f'Range Max: {range_max}\n'
-                               f'Range Min: {range_min}\n')
-
-        self.get_logger.info('Ranges:')
-        for i, range_val in enumerate(msg.ranges):
-            self.get_logger().info(f'   Range {i}: {range_val}')
-
-        self.get_logger.info('Intesities:')
-        for i, intensity_val in enumerate(msg.intensities):
-            self.get_logger().info(f' Intensity {i}: {intensity_val}')
+        print("scan")
+        lidar_map = LidarMap(msg)
+        print("map", lidar_map)
+        road_finder = RoadFinder(lidar_map, (10, 5), (8, 5))
+        print("finder")
+        path = road_finder.find_path()
+        print("path")
+        command_array = self._message_generator.make_message_from_path(path)
+        print(command_array)
+        print("scan")
+        self.publisher_.publish(command_array)

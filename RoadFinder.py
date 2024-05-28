@@ -17,7 +17,7 @@ class RoadFinder:
         for dx, dy in offsets:
             nx, ny = x + dx, y + dy
             if 0 <= nx < len(self.lidar_map) and 0 <= ny < len(self.lidar_map[0]):
-                if condition_check(self.lidar_map[nx][ny]):
+                if condition_check(self.lidar_map[ny, nx]):
                     return False
         return True
 
@@ -53,6 +53,8 @@ class RoadFinder:
         while current != start_index:
             path_indices.append(current)
             current = predecessor[current]
+            if predecessor[current] == -1:
+                raise ValueError("Predecessor is -1")
         path_indices.append(start_index)
         path_indices.reverse()
         return path_indices
@@ -65,15 +67,18 @@ class RoadFinder:
         predecessor = [-1] * num_vertices
 
         distances[start_index] = 0
+        print("graph", graph)
 
         self.__relax_edges(graph, distances, predecessor)
-
+        print("pred", predecessor)
         path_indices = self.__reconstruct_path(predecessor, start_index, end_index)
+        print("reconstr")
         self.path = [keys[idx] for idx in path_indices]
         return self.path
 
     def find_path(self):
         graph, keys = self.__create_graph()
+        print("create graph")
         return self.__bellman_ford(graph, keys)
 
     def __repr__(self):

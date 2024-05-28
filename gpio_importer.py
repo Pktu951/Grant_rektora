@@ -8,7 +8,7 @@ def import_gpio():
     Exits the application if neither real nor simulated GPIO libraries are available.
     """
     try:
-        import RPi.GPIO as GPIO
+        import gpiod as GPIO
         print("Using real RPi.GPIO library.")
     except ImportError:
         try:

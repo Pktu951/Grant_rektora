@@ -23,7 +23,7 @@ class LidarMap:
         :param lidar_scan: A LaserScan message object.
         """
         angles_degrees = np.arange(laser_scan.angle_min, laser_scan.angle_max + laser_scan.angle_increment, laser_scan.angle_increment)
-        angles_radians = np.radians(angles_degrees)
+        angles_radians = angles_degrees
         
         for distance, angle_radians in zip(laser_scan.ranges, angles_radians):
             if not (laser_scan.range_min <= distance <= laser_scan.range_max):
