@@ -4,8 +4,10 @@ from sensor_msgs.msg import LaserScan
 
 from LidarMap import LidarMap
 from interfaces.msg import CommandArray
+import interfaces.msg as msg
 from Path2Communicates.robot_message import RobotMessageGenerator
 from RoadFinder import RoadFinder
+import time
 
 
 class LaserScanSubscriber(Node):
@@ -24,10 +26,10 @@ class LaserScanSubscriber(Node):
         print("scan")
         lidar_map = LidarMap(msg)
         print("map", lidar_map)
+        t = time.time()
         road_finder = RoadFinder(lidar_map, (10, 5), (8, 5))
-        print("finder")
         path = road_finder.find_path()
-        print("path")
+        print("path", path)
         command_array = self._message_generator.make_message_from_path(path)
         print(command_array)
         print("scan")
