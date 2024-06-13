@@ -25,6 +25,7 @@ class RoadFinder:
         keys = [(i, j) for i, row in enumerate(self.lidar_map) for j, val in enumerate(row) if not val]
         key_to_index = {key: idx for idx, key in enumerate(keys)}
         graph = {i: [] for i in range(len(keys))}
+        edge_weights = {}
 
         for idx, (x, y) in enumerate(keys):
             neighbors = [
@@ -33,18 +34,24 @@ class RoadFinder:
             ]
             for dx, dy in neighbors:
                 nx, ny = x + dx, y + dy
-                if (nx, ny) in key_to_index and self.__is_path_clear((x, y), [(dx, dy)], lambda val: val == False):
-                    graph[idx].append(key_to_index[(nx, ny)])
+                if (nx, ny) in key_to_index and self.__is_path_clear((x, y), [(dx, dy)], lambda val: val == 0):
+                    neighbor_index = key_to_index[(nx, ny)]
+                    graph[idx].append(neighbor_index)
+                    if abs(dx) + abs(dy) == 1:
+                        edge_weights[(idx, neighbor_index)] = 1
+                    else:  # diagonal move
+                        edge_weights[(idx, neighbor_index)] = math.sqrt(2)
 
-        return graph, keys
+        return graph, keys, edge_weights
 
-    def __relax_edges(self, graph, distances, predecessor):
+    def __relax_edges(self, graph, edge_weights, distances, predecessor):
         num_vertices = len(graph)
         for _ in range(num_vertices - 1):
             for u in range(num_vertices):
                 for v in graph[u]:
-                    if distances[v] > distances[u] + 1:
-                        distances[v] = distances[u] + 1
+                    weight = edge_weights[(u, v)]
+                    if distances[v] > distances[u] + weight:
+                        distances[v] = distances[u] + weight
                         predecessor[v] = u
 
     def __reconstruct_path(self, predecessor, start_index, end_index):
@@ -55,13 +62,11 @@ class RoadFinder:
                 raise ValueError("Can't find path: Predecessor is -1")
             path_indices.append(current)
             current = predecessor[current]
-
-
         path_indices.append(start_index)
         path_indices.reverse()
         return path_indices
 
-    def __bellman_ford(self, graph, keys):
+    def __bellman_ford(self, graph, keys, edge_weights):
         num_vertices = len(graph)
         start_index = keys.index(self.starting_point)
         end_index = keys.index(self.ending_point)
@@ -70,14 +75,15 @@ class RoadFinder:
 
         distances[start_index] = 0
 
-        self.__relax_edges(graph, distances, predecessor)
+        self.__relax_edges(graph, edge_weights, distances, predecessor)
+
         path_indices = self.__reconstruct_path(predecessor, start_index, end_index)
         self.path = [keys[idx] for idx in path_indices]
         return self.path
 
     def find_path(self):
-        graph, keys = self.__create_graph()
-        return self.__bellman_ford(graph, keys)
+        graph, keys, edge_weights = self.__create_graph()
+        return self.__bellman_ford(graph, keys, edge_weights)
 
     def __repr__(self):
         return "[" + " -> ".join(map(str, self.path)) + "]"
