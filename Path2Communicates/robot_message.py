@@ -48,7 +48,7 @@ class RobotMessageGenerator:
             else: self.robot_angle = self.robot_angle - ANGLE_AFTER_1_MESSAGE
 
     @staticmethod
-    def _is_within_bounds(x_ : float, y_ : float, value=0.8) -> bool:
+    def _is_within_bounds(x_ : float, y_ : float, value=0.2) -> bool:
         return -value < x_ < value and -value < y_ < value
 
     def _message_generator(self, point_coordinates : Tuple[float, float]) -> List[str]:
@@ -57,7 +57,6 @@ class RobotMessageGenerator:
         angle = self._angle_robot_point((projected_x, projected_y))
 
         while not self._is_within_bounds(projected_x, projected_y):
-            print(projected_x, projected_y)
             if angle < 90 - ANGLE_AFTER_1_MESSAGE:
                 messages.append(CommandArray.GO_RIGHT)
                 self._recalculate_coordinates_for_message('right')

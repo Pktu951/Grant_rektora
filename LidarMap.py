@@ -2,7 +2,7 @@ import numpy as np
 from sensor_msgs.msg import LaserScan
 
 class LidarMap:
-    def __init__(self, laser_scan: LaserScan, size : int = 11, cell_size : float = 1):
+    def __init__(self, laser_scan: LaserScan, target, size : int = 11, cell_size : float = 1):
 
         """
         Initialize the map using a ROS 2 LaserScan scan.
@@ -14,7 +14,8 @@ class LidarMap:
         self.cell_size = cell_size
         self.map = np.zeros((size, size), dtype=bool)  # initialize the map with boolean values
         self.position = (size-1, size // 2)  # point that the lidar is taking scan from
-        
+        self.target = target
+
         self.process_scan(laser_scan)
 
     def process_scan(self, laser_scan: LaserScan) -> None:
@@ -48,8 +49,12 @@ class LidarMap:
     def __repr__(self):
         map_str = ""
         for i, row in enumerate(self.map):
+            map_str += "|"
             if i == self.position[0]:
-                map_str += " ".join(["." if j == self.position[1] else "█" if cell else " " for j, cell in enumerate(row)]) + "\n"
+                map_str += " ".join(["." if j == self.position[1] else "█" if cell else " " for j, cell in enumerate(row)])
+            elif i == self.target[0]:
+                map_str += " ".join(["x" if j == self.target[1] else "█" if cell else " " for j, cell in enumerate(row)])
             else:
-                map_str += " ".join(["█" if cell else " " for cell in row]) + "\n"
+                map_str += " ".join(["█" if cell else " " for cell in row])
+            map_str += "|\n"
         return map_str

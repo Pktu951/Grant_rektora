@@ -21,7 +21,7 @@ class ScannerMockPublisher(Node):
         
         msg.angle_min = float(-math.pi / 2)
         msg.angle_max = float(math.pi / 2)
-        msg.angle_increment = float(math.pi / 180)
+        msg.angle_increment = float(math.pi / 180)/2
         
         msg.time_increment = float(1.0 / self.frequency)
         msg.scan_time = float(1.0 / self.frequency)
@@ -32,7 +32,7 @@ class ScannerMockPublisher(Node):
         msg.ranges = []
         num_ranges = int((msg.angle_max - msg.angle_min) / msg.angle_increment)
 
-        for i in range(num_ranges):
+        for i in range(num_ranges//2):
             msg.ranges.append(float(5))
 
         msg.intensities = []

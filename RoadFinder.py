@@ -52,7 +52,7 @@ class RoadFinder:
         current = end_index
         while current != start_index:
             if predecessor[current] == -1:
-                raise ValueError("Predecessor is -1")
+                raise ValueError("Can't find path: Predecessor is -1")
             path_indices.append(current)
             current = predecessor[current]
 

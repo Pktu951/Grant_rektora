@@ -24,13 +24,16 @@ class LaserScanSubscriber(Node):
 
     def scan_callback(self, msg: LaserScan):
         print("scan")
-        lidar_map = LidarMap(msg)
+        target = (5, 5)
+        lidar_map = LidarMap(msg, target, size = 20, cell_size=0.5)
         print("map", lidar_map)
         t = time.time()
-        road_finder = RoadFinder(lidar_map, (10, 5), (8, 5))
+        road_finder = RoadFinder(lidar_map, lidar_map.position, target)
         path = road_finder.find_path()
         print("path", path)
-        command_array = self._message_generator.make_message_from_path(path)
+        relative_path = [( p[1] - lidar_map.position[1], -p[0] + lidar_map.position[0]) for p in path]
+        print("relative path", relative_path)
+        command_array = self._message_generator.make_message_from_path(relative_path)
         print(command_array)
         print("scan")
         self.publisher_.publish(command_array)
