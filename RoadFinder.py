@@ -17,7 +17,7 @@ class RoadFinder:
         for dx, dy in offsets:
             nx, ny = x + dx, y + dy
             if 0 <= nx < len(self.lidar_map) and 0 <= ny < len(self.lidar_map[0]):
-                if condition_check(self.lidar_map[nx][ny]):
+                if not condition_check(self.lidar_map[nx][ny]):
                     return False
         return True
 
