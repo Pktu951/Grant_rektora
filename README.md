@@ -2,7 +2,8 @@
  
 ## How to run
 ### Before run
-```source ~/ros2_jazzy/install/setup.sh
+```
+source ~/ros2_jazzy/install/setup.sh
 source ~/Grant_rektora/install/setup.sh
 ```
 
