@@ -48,7 +48,7 @@ class LidarMap:
         map_str = ""
         for i, row in enumerate(self.map):
             if i == self.position[0]:
-                map_str += " ".join(["." if j == self.position[1] else "█" if cell else " " for j, cell in enumerate(row)]) + "\n"
+                map_str += "".join(["." if j == self.position[1] else "█" if cell else " " for j, cell in enumerate(row)]) + "\n"
             else:
-                map_str += " ".join(["█" if cell else " " for cell in row]) + "\n"
+                map_str += "".join(["█" if cell else " " for cell in row]) + "\n"
         return map_str
